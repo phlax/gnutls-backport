@@ -1,0 +1,19 @@
+# https://travis-ci.org/#!/phlax/debian-criu
+
+install:
+  - make docker
+
+script:
+  - ls build | grep hogweed | grep deb
+  - docker images | grep gnutls-backport
+
+before_deploy:
+  - echo $DOCKER_API_TOKEN | docker login -u phlax --password-stdin
+
+deploy:
+  provider: script
+  script: make hub-image
+  skip_cleanup: true
+  on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH =~ ^(master)$
